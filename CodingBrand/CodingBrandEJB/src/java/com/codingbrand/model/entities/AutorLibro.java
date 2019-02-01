@@ -31,11 +31,11 @@ public class AutorLibro implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_autor")
-    private Autor idPromotor;
+    private Autor idAutor;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_libro")
-    private Autor idLibro;
+    private Libro idLibro;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -44,19 +44,19 @@ public class AutorLibro implements Serializable {
     @Column(name = "id_autor_libro")
     private Integer idAutorLibro;
 
-    public Autor getIdPromotor() {
-        return idPromotor;
+    public Autor getIdAutor() {
+        return idAutor;
     }
 
-    public void setIdPromotor(Autor idPromotor) {
-        this.idPromotor = idPromotor;
+    public void setIdAutor(Autor idAutor) {
+        this.idAutor = idAutor;
     }
 
-    public Autor getIdLibro() {
+    public Libro getIdLibro() {
         return idLibro;
     }
 
-    public void setIdLibro(Autor idLibro) {
+    public void setIdLibro(Libro idLibro) {
         this.idLibro = idLibro;
     }
 
@@ -75,7 +75,7 @@ public class AutorLibro implements Serializable {
         return hash;
     }
 
-        @Override
+    @Override
     public String toString() {
         return "com.codingbrand.model.entities.AutorLibro[ idAutorLibro=" + idAutorLibro + " ]";
     }
