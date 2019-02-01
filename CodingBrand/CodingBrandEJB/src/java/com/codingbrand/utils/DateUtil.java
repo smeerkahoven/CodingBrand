@@ -43,4 +43,9 @@ public class DateUtil {
 
         return null;
     }
+    
+    public static String toStringDate (Date date){
+         SimpleDateFormat formatter = new SimpleDateFormat(LATIN_AMERICA_FORMAT);
+         return formatter.format(date);
+    }
 }

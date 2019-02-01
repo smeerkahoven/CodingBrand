@@ -13,11 +13,23 @@ import java.util.Date;
  * @author xeio
  */
 public class LibroTable implements Serializable {
+
+    private Integer idLibro;
+    private String titulo;
+    private String fechaEdicion;
+    private Integer numeroAutores;
+
+    public LibroTable(Integer idLibro, String titulo, String fechaEdicion, Integer numeroAutores) {
+        this.idLibro = idLibro;
+        this.titulo = titulo;
+        this.fechaEdicion = fechaEdicion;
+        this.numeroAutores = numeroAutores;
+    }
+
+    public LibroTable() {
+    }
     
-    private Integer idLibro ;
-    private String titulo ;
-    private Date edicion ;
-    private Integer numeroAutores ;
+    
 
     public Integer getIdLibro() {
         return idLibro;
@@ -35,13 +47,15 @@ public class LibroTable implements Serializable {
         this.titulo = titulo;
     }
 
-    public Date getEdicion() {
-        return edicion;
+    public String getFechaEdicion() {
+        return fechaEdicion;
     }
 
-    public void setEdicion(Date edicion) {
-        this.edicion = edicion;
+    public void setFechaEdicion(String fechaEdicion) {
+        this.fechaEdicion = fechaEdicion;
     }
+
+
 
     public Integer getNumeroAutores() {
         return numeroAutores;
@@ -51,7 +65,4 @@ public class LibroTable implements Serializable {
         this.numeroAutores = numeroAutores;
     }
 
-
-    
-    
 }

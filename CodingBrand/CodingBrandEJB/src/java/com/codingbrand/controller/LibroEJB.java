@@ -13,7 +13,10 @@ import com.codingbrand.model.entities.output.LibroTable;
 import com.codingbrand.model.search.LibroSearch;
 import com.codingbrand.remote.LibroRemote;
 import com.codingbrand.utils.DateUtil;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
+import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -22,6 +25,7 @@ import javax.persistence.Query;
  *
  * @author xeio
  */
+@Stateless
 public class LibroEJB implements LibroRemote {
 
     @PersistenceContext
@@ -87,48 +91,71 @@ public class LibroEJB implements LibroRemote {
         return l;
     }
 
-
     @Override
     public List<LibroTable> buscar(LibroSearch search) throws LibroException {
 
-        String q = "select idLibro, titulo, fechaEdicion, autores \n"
+        String q = "select idLibro, titulo, fechaEdicion, numeroAutores \n"
                 + "          from ( \n"
                 + "              select distinct l.id_libro idLibro, \n"
                 + "                  l.titulo,\n"
                 + "                  l.fecha_edicion fechaEdicion,\n"
-                + "                  count(*) autores \n"
+                + "                  count(*) numeroAutores \n"
                 + "              from libro l \n"
                 + "              inner join autor_libro al on l.id_libro = al.id_libro \n"
-                + "              group by l.id_libro, l.titulo, l.fecha_edicion\n"
-                + ") A \n" + " WHERE 1=1  ";
+                + "              group by l.id_libro, l.titulo, l.fecha_edicion \n"
+                + "             ) A \n"
+                + " WHERE 1=1  ";
 
-        if (search.getTitulo() != null) {
-            q += " and A.titulo =?1 \n";
+        if (search != null) {
+            if (search.getTitulo() != null) {
+                q += " and A.titulo =?1 ";
+            }
+
+            if (search.getFecha() != null) {
+                q += " and A.fecha=?2 ";
+            }
+
+            if (search.getNumeroAutores() != null) {
+                q += " and A.numeroAutores = ?3";
+            }
         }
 
-        if (search.getFecha() != null) {
-            q += " and A.fecha=?2 \n";
+        q += " order by A.titulo, A.fechaEdicion, A.numeroAutores ";
+
+        Query query = em.createNativeQuery(q);
+
+        if (search != null) {
+            if (search.getTitulo() != null) {
+                query.setParameter("1", search.getTitulo());
+            }
+
+            if (search.getFecha() != null) {
+                query.setParameter("2", DateUtil.toLatinAmericaDateFormat(search.getFecha()));
+            }
+
+            if (search.getNumeroAutores() != null) {
+                query.setParameter("3", search.getNumeroAutores());
+            }
+
         }
 
-        if (search.getNumeroAutores() != null) {
-            q += " and A.numeroAutores =?3";
+        List<Object[]> l = query.getResultList();
+
+        List<LibroTable> r = new LinkedList<LibroTable>();
+
+        if (!l.isEmpty()) {
+            for (Object[] o : l) {
+                LibroTable libroTable = new LibroTable();
+                libroTable.setIdLibro((Integer) o[0]);
+                libroTable.setTitulo((String) o[1]);
+                libroTable.setFechaEdicion(DateUtil.toStringDate((Date) o[2]));
+                libroTable.setNumeroAutores(((Long) o[3]).intValue());
+
+                r.add(libroTable);
+            }
         }
 
-        q += " orde by A.titulo, A.fechaEdicion, A.autores ";
-
-        Query query = em.createQuery(q, LibroTable.class);
-
-        if (search.getTitulo() != null) {
-            query.setParameter("1", search.getTitulo());
-        }
-
-        if (search.getFecha() != null) {
-
-            query.setParameter("2", DateUtil.toLatinAmericaDateFormat(search.getFecha()));
-        }
-        
-        return query.getResultList() ;
-        
+        return r;
 
     }
 

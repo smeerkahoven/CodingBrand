@@ -5,11 +5,13 @@
  */
 package com.codingbrand.exceptions;
 
+import java.io.Serializable;
+
 /**
  *
  * @author xeio
  */
-public class LibroException extends Exception {
+public class LibroException  extends Exception {
 
     public LibroException() {
     }
